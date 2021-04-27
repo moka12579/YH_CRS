@@ -26,7 +26,6 @@ namespace YH_CRS
             Console.WriteLine("请输入你的开户金额");
             string money1 = Console.ReadLine();
             money = double.Parse(money1);
-            Console.WriteLine("恭喜您开户成功,正在跳转至登录");
             Console.WriteLine("这是你的开户信息");
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine("姓名:" + userName);
@@ -43,8 +42,9 @@ namespace YH_CRS
             Console.WriteLine("\t请选择操作:");
             Console.WriteLine("\t1.存款");
             Console.WriteLine("\t2.取款");
-            Console.WriteLine("\t3.转账");
-            Console.WriteLine("\t4.查看余额");
+            Console.WriteLine("\t3.查看余额");
+            Console.WriteLine("\t4.转账");
+            Console.WriteLine("\t5.退出");
             Console.WriteLine("请选择你需要操作的编号，按回车结束");
             string i = Console.ReadLine();
             int b = int.Parse(i);
@@ -58,9 +58,15 @@ namespace YH_CRS
                     withdraw();
                     menu();
                     break;
-                case 4:
+                case 3:
                     Console.WriteLine("您的余额剩余"+money);
                     menu();
+                    break;
+                case 4:
+                    transfer();
+                    menu();
+                    break;
+                case 5:
                     break;
             }
         }
@@ -113,7 +119,7 @@ namespace YH_CRS
             {
                 case 1:
                     account();
-                    login();
+                    hello();
                     break;
                 case 2:
                     if (login())
@@ -136,9 +142,18 @@ namespace YH_CRS
         static void deposit()
         {
             Console.WriteLine("请输入你要存款的金额");
-            double d = double.Parse(Console.ReadLine());
-            money += d;
-            Console.WriteLine("存款成功,你的余额为" + money);
+            try
+            {
+                double d = double.Parse(Console.ReadLine());
+                money += d;
+                Console.WriteLine("存款成功,你的余额为" + money);
+            }
+            catch
+            {
+                Console.WriteLine("请输入正确的数字");
+                deposit();
+            }
+            
         }
         static void withdraw()
         {
@@ -152,6 +167,20 @@ namespace YH_CRS
             {
                 money -= d;
                 Console.WriteLine("取款成功，请拿好你的现金");
+            }
+        }
+        static void transfer()
+        {
+            Console.WriteLine("请输入您要转账的金额");
+            double d = double.Parse(Console.ReadLine());
+            if (money < d)
+            {
+                Console.WriteLine("转账失败，卡内余额不足");
+            }
+            else
+            {
+                money -= d;
+                Console.WriteLine("转账成功，你的余额剩余"+money);
             }
         }
     }
