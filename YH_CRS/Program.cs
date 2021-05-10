@@ -12,6 +12,7 @@ namespace YH_CRS
         {
             hello();
         }
+        //开户
         static void account()
         {
             Console.WriteLine("请输入你的姓名");
@@ -21,8 +22,45 @@ namespace YH_CRS
             string account1 = Console.ReadLine();
             uuid = long.Parse(account1);
             Console.WriteLine("请输入您要开户的密码");
-            string password = Console.ReadLine();
-            userPassword = password;
+            bool flag = true;
+            for(int i=0; i < 3; i++)
+            {
+                flag = true;
+                string passwd = Console.ReadLine() ;
+                if (passwd.Length != 6)
+                {
+                    
+                    Console.WriteLine("您输入的密码不够6位，请重新输入");
+                    flag = false;
+                }
+                else
+                {
+                    for (int j = 0; j < passwd.Length; j++)
+                    {
+                        if (!Char.IsNumber(passwd, j))
+                        {
+                            Console.WriteLine("密码只能是数字类型,请再次尝试输入");
+                            flag = false;
+                            break;
+                        }
+
+                    }
+                }
+                if (flag)
+                {
+                    Console.WriteLine("您输入的密码有效");
+                    Console.WriteLine("请再次输入您要开户的密码");
+                    string password2 = Console.ReadLine();
+                    while (passwd != password2)
+                    {
+                        Console.WriteLine("两次密码不一致，请再次尝试");
+                        password2 = Console.ReadLine();
+                    }
+                    userPassword = passwd;
+                    break;
+                }
+                
+            }
             Console.WriteLine("请输入你的开户金额");
             string money1 = Console.ReadLine();
             money = double.Parse(money1);
@@ -34,6 +72,7 @@ namespace YH_CRS
             Console.WriteLine("-------------------------------------------");
 
         }
+        //菜单
         static void menu()
         {
             Console.WriteLine("*******************************************");
@@ -70,6 +109,7 @@ namespace YH_CRS
                     break;
             }
         }
+        //登陆
         static bool login()
         {
             Console.WriteLine("*******************************************");
@@ -101,6 +141,7 @@ namespace YH_CRS
             }
 
         }
+        //欢迎
         static void hello()
         {
             Console.WriteLine("*******************************************");
@@ -139,6 +180,7 @@ namespace YH_CRS
                     break;
             }
         }
+        //取款
         static void deposit()
         {
             Console.WriteLine("请输入你要存款的金额");
@@ -155,6 +197,7 @@ namespace YH_CRS
             }
             
         }
+        //存款
         static void withdraw()
         {
             Console.WriteLine("请输入你要存款的金额");
@@ -169,6 +212,7 @@ namespace YH_CRS
                 Console.WriteLine("取款成功，请拿好你的现金");
             }
         }
+        //转账
         static void transfer()
         {
             Console.WriteLine("请输入您要转账的金额");
