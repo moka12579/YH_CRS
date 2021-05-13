@@ -270,7 +270,7 @@ namespace YH_CRS
                     else
                     {
                         Console.WriteLine("新密码不能和旧密码一致，请重新输入");
-                        passwdNew = Console.ReadLine();
+                        flag = false;
                     }
                     if (flag)
                     {
