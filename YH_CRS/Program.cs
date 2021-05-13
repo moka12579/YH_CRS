@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace YH_CRS
 {
@@ -22,7 +23,7 @@ namespace YH_CRS
             string account1 = Console.ReadLine();
             uuid = long.Parse(account1);
             Console.WriteLine("请输入您要开户的密码");
-            bool flag = true;
+            bool flag;
             for(int i=0; i < 3; i++)
             {
                 flag = true;
@@ -83,7 +84,8 @@ namespace YH_CRS
             Console.WriteLine("\t2.取款");
             Console.WriteLine("\t3.查看余额");
             Console.WriteLine("\t4.转账");
-            Console.WriteLine("\t5.退出");
+            Console.WriteLine("\t5.修改密码");
+            Console.WriteLine("\t6.退出");
             Console.WriteLine("请选择你需要操作的编号，按回车结束");
             string i = Console.ReadLine();
             int b = int.Parse(i);
@@ -106,7 +108,13 @@ namespace YH_CRS
                     menu();
                     break;
                 case 5:
+                    updatePasswd();
+                    hello();
                     break;
+                case 6:
+                    Console.WriteLine("欢迎下次使用");
+                    Process.GetCurrentProcess().Kill();
+                    return;
             }
         }
         //登陆
@@ -174,13 +182,11 @@ namespace YH_CRS
                     break;
                 case 3:
                     Console.WriteLine("期待您的再次使用");
-                    break;
-                case 4:
-                    Console.WriteLine(userName);
+                    Process.GetCurrentProcess().Kill();
                     break;
             }
         }
-        //取款
+        //存款
         static void deposit()
         {
             Console.WriteLine("请输入你要存款的金额");
@@ -197,7 +203,7 @@ namespace YH_CRS
             }
             
         }
-        //存款
+        //取款
         static void withdraw()
         {
             Console.WriteLine("请输入你要存款的金额");
@@ -225,6 +231,68 @@ namespace YH_CRS
             {
                 money -= d;
                 Console.WriteLine("转账成功，你的余额剩余"+money);
+            }
+        }
+        //更改密码
+        static void updatePasswd()
+        {
+            Console.WriteLine("请输入您的原密码");
+            string passwd = Console.ReadLine();
+            if (passwd == userPassword)
+            {
+                Console.WriteLine("请输入新的密码");
+                bool flag;
+                for (int i = 0; i < 3; i++)
+                {
+                    flag = true;
+                    string passwdNew = Console.ReadLine();
+                    if(passwdNew != passwd)
+                    {
+                        if (passwdNew.Length != 6)
+                        {
+                            Console.WriteLine("您输入的密码不是6位，请重新输入");
+                            flag = false;
+                        }
+                        else
+                        {
+                            for (int j = 0; j < passwdNew.Length; j++)
+                            {
+                                if (!Char.IsNumber(passwdNew, j))
+                                {
+                                    Console.WriteLine("密码只能是数字类型,请再次尝试输入");
+                                    flag = false;
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("新密码不能和旧密码一致，请重新输入");
+                        passwdNew = Console.ReadLine();
+                    }
+                    if (flag)
+                    {
+                        Console.WriteLine("您输入的新密码有效");
+                        Console.WriteLine("请再次输入您要更改的密码");
+                        string password2 = Console.ReadLine();
+                        while (passwdNew != password2)
+                        {
+                            Console.WriteLine("两次密码不一致，请再次尝试");
+                            password2 = Console.ReadLine();
+                        }
+                        userPassword = passwdNew;
+                        Console.WriteLine("密码修改成功，请重新登陆");
+                        break;
+                    }
+                }
+                
+            }
+            else
+            {
+                Console.WriteLine("原密码不一致");
+                updatePasswd();
             }
         }
     }
