@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace YH_CRS
 {
     class Program
     {
-        static string userName;
-        static string userPassword;
-        static long uuid;
-        static double money;
-        
+        static User[] a;
+        static User u;
         static void Main(string[] args)
         {
             hello();
@@ -19,10 +18,10 @@ namespace YH_CRS
         {
             Console.WriteLine("请输入你的姓名");
             string name = Console.ReadLine();
-            userName = name;
+            u.UserName = name;
             Console.WriteLine("请输入你的开户账号");
             string account1 = Console.ReadLine();
-            uuid = long.Parse(account1);
+            u.Uuid = long.Parse(account1);
             Console.WriteLine("请输入您要开户的密码");
             bool flag;
             for(int i=1; i <= 3; i++)
@@ -58,34 +57,30 @@ namespace YH_CRS
                         password2 = Console.ReadLine();
                     }
                     Console.WriteLine("密码已成功设置，请继续注册");
-                    userPassword = passwd;
+                    u.UserPassword = passwd;
                     break;
                 }
                 if (i == 3)
                 {
                     Console.WriteLine("您尝试的次数已经3次，请重新设置密码");
                     i = 0;
-                    //Process.GetCurrentProcess().Kill();
-                    //account();
-                    //continue;
                 }
             }
             Console.WriteLine("请输入你的开户金额");
             string money1 = Console.ReadLine();
-            money = double.Parse(money1);
+            u.Money = double.Parse(money1);
             Console.WriteLine("这是你的开户信息");
             Console.WriteLine("-------------------------------------------");
-            Console.WriteLine("姓名:" + userName);
-            Console.WriteLine("开户账号:" + uuid);
-            Console.WriteLine("开户金额:" + money);
+            Console.WriteLine("姓名:" + u.UserName);
+            Console.WriteLine("开户账号:" + u.Uuid);
+            Console.WriteLine("开户金额:" + u.Money);
             Console.WriteLine("-------------------------------------------");
-
         }
         //菜单
         static void menu()
         {
             Console.WriteLine("*******************************************");
-            Console.WriteLine("\t尊敬的"+userName+"欢迎使用本系统");
+            Console.WriteLine("\t尊敬的"+u.UserName+"欢迎使用本系统");
             Console.WriteLine("*******************************************");
             Console.WriteLine("\t请选择操作:");
             Console.WriteLine("\t1.存款");
@@ -93,7 +88,8 @@ namespace YH_CRS
             Console.WriteLine("\t3.查看余额");
             Console.WriteLine("\t4.转账");
             Console.WriteLine("\t5.修改密码");
-            Console.WriteLine("\t6.退出");
+            Console.WriteLine("\t6.查询所有账户");
+            Console.WriteLine("\t7.退出");
             Console.WriteLine("请选择你需要操作的编号，按回车结束");
             string i = Console.ReadLine();
             int b = int.Parse(i);
@@ -108,7 +104,7 @@ namespace YH_CRS
                     menu();
                     break;
                 case 3:
-                    Console.WriteLine("您的余额剩余"+money);
+                    Console.WriteLine("您的余额剩余"+u.Money);
                     menu();
                     break;
                 case 4:
@@ -120,6 +116,10 @@ namespace YH_CRS
                     hello();
                     break;
                 case 6:
+                    select();
+                    menu();
+                    return;
+                case 7:
                     Console.WriteLine("欢迎下次使用");
                     Process.GetCurrentProcess().Kill();
                     return;
@@ -133,11 +133,11 @@ namespace YH_CRS
             Console.WriteLine("*******************************************");
             Console.WriteLine("请输入您的用户名");
             string name = Console.ReadLine();
-            if(name == userName)
+            if(name == u.UserName)
             {
                 Console.WriteLine("请输入您的密码");
                 string password = Console.ReadLine();
-                if (password == userPassword)
+                if (password == u.UserPassword)
                 {
                     Console.WriteLine("恭喜您登录成功");
                     menu();
@@ -166,7 +166,9 @@ namespace YH_CRS
             Console.WriteLine("\n");
             Console.WriteLine("\t\t1.开户");
             Console.WriteLine("\t\t2.登录");
-            Console.WriteLine("\t\t3.退出");
+            Console.WriteLine("\t\t3.批量开户");
+            Console.WriteLine("\t\t4.查询所有");
+            Console.WriteLine("\t\t5.退出");
             Console.WriteLine("-------------------------------------------");
             Console.WriteLine("\n");
             Console.WriteLine("请选择你需要操作的编号，按回车结束");
@@ -189,6 +191,14 @@ namespace YH_CRS
                     }
                     break;
                 case 3:
+                    batch();
+                    hello();
+                    break;
+                case 4:
+                    select();
+                    hello();
+                    break;
+                case 5:
                     Console.WriteLine("期待您的再次使用");
                     Process.GetCurrentProcess().Kill();
                     break;
@@ -201,8 +211,8 @@ namespace YH_CRS
             try
             {
                 double d = double.Parse(Console.ReadLine());
-                money += d;
-                Console.WriteLine("存款成功,你的余额为" + money);
+                u.Money += d;
+                Console.WriteLine("存款成功,你的余额为" + u.Money);
             }
             catch
             {
@@ -216,13 +226,13 @@ namespace YH_CRS
         {
             Console.WriteLine("请输入你要存款的金额");
             double d = double.Parse(Console.ReadLine());
-            if(money < d)
+            if(u.Money < d)
             {
                 Console.WriteLine("取款失败，卡内余额不足");
             }
             else
             {
-                money -= d;
+                u.Money -= d;
                 Console.WriteLine("取款成功，请拿好你的现金");
             }
         }
@@ -231,14 +241,14 @@ namespace YH_CRS
         {
             Console.WriteLine("请输入您要转账的金额");
             double d = double.Parse(Console.ReadLine());
-            if (money < d)
+            if (u.Money < d)
             {
                 Console.WriteLine("转账失败，卡内余额不足");
             }
             else
             {
-                money -= d;
-                Console.WriteLine("转账成功，你的余额剩余"+money);
+                u.Money -= d;
+                Console.WriteLine("转账成功，你的余额剩余"+u.Money);
             }
         }
         //更改密码
@@ -246,7 +256,7 @@ namespace YH_CRS
         {
             Console.WriteLine("请输入您的原密码");
             string passwd = Console.ReadLine();
-            if (passwd == userPassword)
+            if (passwd == u.UserPassword)
             {
                 Console.WriteLine("请输入新的密码");
                 bool flag;
@@ -290,7 +300,7 @@ namespace YH_CRS
                             Console.WriteLine("两次密码不一致，请再次尝试");
                             password2 = Console.ReadLine();
                         }
-                        userPassword = passwdNew;
+                        u.UserPassword = passwdNew;
                         Console.WriteLine("密码修改成功，请重新登陆");
                         break;
                     }
@@ -306,7 +316,7 @@ namespace YH_CRS
         //批量
         static void batch()
         {
-
+            
             Console.WriteLine("请输入你要开几个账户");
             int sum = Convert.ToInt32(Console.ReadLine());
             if (sum == 1)
@@ -315,14 +325,17 @@ namespace YH_CRS
                 account();
             }else
             {
+                a = new User[sum];
                 for(int i = 0; i < sum; i++)
                 {
+                    Console.WriteLine("你正在创建第{0}个账户",i);
+                    u = new User();
                     Console.WriteLine("请输入你的姓名");
                     string name = Console.ReadLine();
-                    userName = name;
+                    u.UserName=name;
                     Console.WriteLine("请输入你的开户账号");
                     string account1 = Console.ReadLine();
-                    uuid = long.Parse(account1);
+                    u.Uuid = long.Parse(account1);
                     Console.WriteLine("请输入您要开户的密码");
                     bool flag;
                     for (int j = 1; j <= 3; j++)
@@ -358,32 +371,38 @@ namespace YH_CRS
                                 password2 = Console.ReadLine();
                             }
                             Console.WriteLine("密码已成功设置，请继续注册");
-                            userPassword = passwd;
+                            u.UserPassword = passwd;
                             break;
                         }
-                        if (i == 3)
+                        if (j == 3)
                         {
                             Console.WriteLine("您尝试的次数已经3次，请重新设置密码");
-                            i = 0;
-                            //Process.GetCurrentProcess().Kill();
-                            //account();
-                            //continue;
+                            j = 0;
                         }
                     }
                     Console.WriteLine("请输入你的开户金额");
                     string money1 = Console.ReadLine();
-                    money = double.Parse(money1);
+                    u.Money = double.Parse(money1);
                     Console.WriteLine("这是你的开户信息");
                     Console.WriteLine("-------------------------------------------");
-                    Console.WriteLine("姓名:" + userName);
-                    Console.WriteLine("开户账号:" + uuid);
-                    Console.WriteLine("开户金额:" + money);
+                    Console.WriteLine("姓名:" + u.UserName);
+                    Console.WriteLine("开户账号:" + u.Uuid);
+                    Console.WriteLine("开户金额:" + u.Money);
                     Console.WriteLine("-------------------------------------------");
                     Console.WriteLine("已成功存入数组中");
-
+                    a[i] = u;
                 }
             }
         }
+        //查询所有账户
+        static void select()
+        {
+            for(int i=0;i<a.Length;i++)
+            {
+                Console.WriteLine(a[i]);
+            }
+        }
+        
     }
     class User
     {
@@ -392,7 +411,44 @@ namespace YH_CRS
         private static long uuid;
         private static double money;
 
-        
-        
+        public string UserName
+        {
+            get => userName;
+            set => userName = value;
+        }
+
+        public  string UserPassword
+        {
+            get => userPassword;
+            set => userPassword = value;
+        }
+
+        public  long Uuid
+        {
+            get => uuid;
+            set => uuid = value;
+        }
+
+        public  double Money
+        {
+            get => money;
+            set => money = value;
+        }
+
+        public override string ToString()
+        {
+            return "开户的名称："+userName+",账户id："+Uuid+",密码："+Md5Encrypt64(UserPassword)+",所剩余额："+Money;
+        }
+        public static string Md5Encrypt64(string password)
+        {
+            MD5CryptoServiceProvider md5Hasher = new MD5CryptoServiceProvider();
+            var hashedDataBytes = md5Hasher.ComputeHash(Encoding.GetEncoding("UTF-8").GetBytes(password));
+            StringBuilder tmp = new StringBuilder();
+            foreach (byte i in hashedDataBytes)
+            {
+                tmp.Append(i.ToString("x2"));
+            }
+            return tmp.ToString();
+        }
     }
 }
