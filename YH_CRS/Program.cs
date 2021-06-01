@@ -9,6 +9,7 @@ namespace YH_CRS
         static string userPassword;
         static long uuid;
         static double money;
+        
         static void Main(string[] args)
         {
             hello();
@@ -24,14 +25,13 @@ namespace YH_CRS
             uuid = long.Parse(account1);
             Console.WriteLine("请输入您要开户的密码");
             bool flag;
-            for(int i=0; i < 3; i++)
+            for(int i=1; i <= 3; i++)
             {
                 flag = true;
-                string passwd = Console.ReadLine() ;
+                string passwd = Console.ReadLine();
                 if (passwd.Length != 6)
                 {
-                    
-                    Console.WriteLine("您输入的密码不够6位，请重新输入");
+                    Console.WriteLine("您输入的密码不是6位，请重新输入");
                     flag = false;
                 }
                 else
@@ -57,10 +57,18 @@ namespace YH_CRS
                         Console.WriteLine("两次密码不一致，请再次尝试");
                         password2 = Console.ReadLine();
                     }
+                    Console.WriteLine("密码已成功设置，请继续注册");
                     userPassword = passwd;
                     break;
                 }
-                
+                if (i == 3)
+                {
+                    Console.WriteLine("您尝试的次数已经3次，请重新设置密码");
+                    i = 0;
+                    //Process.GetCurrentProcess().Kill();
+                    //account();
+                    //continue;
+                }
             }
             Console.WriteLine("请输入你的开户金额");
             string money1 = Console.ReadLine();
@@ -295,5 +303,96 @@ namespace YH_CRS
                 updatePasswd();
             }
         }
+        //批量
+        static void batch()
+        {
+
+            Console.WriteLine("请输入你要开几个账户");
+            int sum = Convert.ToInt32(Console.ReadLine());
+            if (sum == 1)
+            {
+                Console.WriteLine("已自动跳转至普通开户");
+                account();
+            }else
+            {
+                for(int i = 0; i < sum; i++)
+                {
+                    Console.WriteLine("请输入你的姓名");
+                    string name = Console.ReadLine();
+                    userName = name;
+                    Console.WriteLine("请输入你的开户账号");
+                    string account1 = Console.ReadLine();
+                    uuid = long.Parse(account1);
+                    Console.WriteLine("请输入您要开户的密码");
+                    bool flag;
+                    for (int j = 1; j <= 3; j++)
+                    {
+                        flag = true;
+                        string passwd = Console.ReadLine();
+                        if (passwd.Length != 6)
+                        {
+                            Console.WriteLine("您输入的密码不是6位，请重新输入");
+                            flag = false;
+                        }
+                        else
+                        {
+                            for (int z = 0; z < passwd.Length; z++)
+                            {
+                                if (!Char.IsNumber(passwd, z))
+                                {
+                                    Console.WriteLine("密码只能是数字类型,请再次尝试输入");
+                                    flag = false;
+                                    break;
+                                }
+
+                            }
+                        }
+                        if (flag)
+                        {
+                            Console.WriteLine("您输入的密码有效");
+                            Console.WriteLine("请再次输入您要开户的密码");
+                            string password2 = Console.ReadLine();
+                            while (passwd != password2)
+                            {
+                                Console.WriteLine("两次密码不一致，请再次尝试");
+                                password2 = Console.ReadLine();
+                            }
+                            Console.WriteLine("密码已成功设置，请继续注册");
+                            userPassword = passwd;
+                            break;
+                        }
+                        if (i == 3)
+                        {
+                            Console.WriteLine("您尝试的次数已经3次，请重新设置密码");
+                            i = 0;
+                            //Process.GetCurrentProcess().Kill();
+                            //account();
+                            //continue;
+                        }
+                    }
+                    Console.WriteLine("请输入你的开户金额");
+                    string money1 = Console.ReadLine();
+                    money = double.Parse(money1);
+                    Console.WriteLine("这是你的开户信息");
+                    Console.WriteLine("-------------------------------------------");
+                    Console.WriteLine("姓名:" + userName);
+                    Console.WriteLine("开户账号:" + uuid);
+                    Console.WriteLine("开户金额:" + money);
+                    Console.WriteLine("-------------------------------------------");
+                    Console.WriteLine("已成功存入数组中");
+
+                }
+            }
+        }
+    }
+    class User
+    {
+        private static string userName;
+        private static string userPassword;
+        private static long uuid;
+        private static double money;
+
+        
+        
     }
 }
